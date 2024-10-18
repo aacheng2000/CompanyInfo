@@ -1,10 +1,7 @@
 # Main script
 
-def main2():
-    print('main2')
-
-def main():
-    import requests
+def main(stock1,stock2,stock3,stock4,stock5,stock6):
+    #import requests
     import json
     import openpyxl
     from openpyxl import Workbook
@@ -25,7 +22,7 @@ def main():
     apiHost = "yahoo-finance-api-data.p.rapidapi.com"
     image = Image
     ws._image = image
-    symbols = ['WD','CBRE','JLL','WFC','PNC','AAPL']
+    symbols = [stock1,stock2,stock3,stock4,stock5,stock6]
 
     # Get logo pictures
     logoDestination = ['B1','C1','D1','E1','F1','G1']
