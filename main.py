@@ -202,6 +202,21 @@ def main(stock1,stock2,stock3,stock4,stock5,stock6):
     for j in range(numNonBlank):
         print('j=' + str(j))
         ws.cell(2,j+2).value = response['data'][j]['shortName']
+        ws.cell(33,j+2).value = response['data'][j]['currency']
+        ws.cell(34,j+2).value = response['data'][j]['pegRatio']
+        ws.cell(35,j+2).value = f"${(response['data'][j]['revenue']):,.2f}"
+        ws.cell(36,j+2).value = response['data'][j]['epsCurrentYear']
+        ws.cell(37,j+2).value = response['data'][j]['quoteSummary']['summaryDetail']['regularMarketPreviousClose']
+        ws.cell(38,j+2).value = response['data'][j]['quoteSummary']['summaryDetail']['payoutRatio']
+
+    # Make labels in column 1
+        ws.cell(33,1).value = "currency"
+        ws.cell(34,1).value = "pegRatio"
+        ws.cell(35,1).value = "revenue"
+        ws.cell(36,1).value = "epsCurrentYear"
+        ws.cell(37,1).value = "regularMarketPreviousClose"
+        ws.cell(38,1).value = "payoutRatio"
+
     # Now try this to let user download:
     output = BytesIO()
     wb.save(output)
