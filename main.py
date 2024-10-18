@@ -23,6 +23,15 @@ def main(stock1,stock2,stock3,stock4,stock5,stock6):
     image = Image
     ws._image = image
     symbols = [stock1,stock2,stock3,stock4,stock5,stock6]
+    symbolsUsed = ['','','','','',''] 
+    # Ignore blank stock textboxes
+    index = 0
+    for s in range(6):
+        if symbols[s] is not '':
+            symbolsUsed[index] = symbols[s]
+            index += 1          
+    symbols = symbolsUsed
+    numNonBlank = index
 
     # Get logo pictures
     logoDestination = ['B1','C1','D1','E1','F1','G1']
@@ -40,8 +49,8 @@ def main(stock1,stock2,stock3,stock4,stock5,stock6):
 
     # Loop thru Symbols
 
-    for c in range(4): #used to be 6
-
+    for c in range(index): #used to be 6
+        print("c=" + str(c))
         # Get company info from 'symbol-profile' path of Yahoo Finance API
         url = "https://yahoo-finance-api-data.p.rapidapi.com/summary/symbol-profile?symbol=" + symbols[c]
         response = g(url,apiHost)
@@ -112,15 +121,6 @@ def main(stock1,stock2,stock3,stock4,stock5,stock6):
         ws.cell(row=9, column=2+c, value=quarterlyEarnings[1])
         ws.cell(row=10, column=2+c, value=quarterlyEarnings[2])
         ws.cell(row=11, column=2+c, value=quarterlyEarnings[3])
-
-
-
-
-
-
-
-
-
 
         # Create a new sheet for each symbol
         new_sheet = wb.create_sheet(title=symbols[c])
@@ -199,7 +199,9 @@ def main(stock1,stock2,stock3,stock4,stock5,stock6):
     url = "https://yahoo-finance-api-data.p.rapidapi.com/symbol/composite?symbol=" + symbolString
     response = g(url,apiHost)
     print('last call = ' + response['data'][0]['shortName'])
-
+    for j in range(numNonBlank):
+        print('j=' + str(j))
+        ws.cell(2,j+2).value = response['data'][j]['shortName']
     # Now try this to let user download:
     output = BytesIO()
     wb.save(output)
