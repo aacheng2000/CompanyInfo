@@ -1,14 +1,12 @@
 # Main script
 
 def main(stock1,stock2,stock3,stock4,stock5,stock6, timePeriod):
-    #import requests
     import json
     import openpyxl
     from openpyxl import Workbook
     from openpyxl.drawing.image import Image
     from openpyxl.styles import Alignment, PatternFill
     from getJSON import getJSON as g
-    #from PIL import Image as PILImage
     from io import BytesIO
     from addSheet import getArray
     from openpyxl.chart import LineChart, Reference, BarChart, AreaChart
@@ -25,6 +23,7 @@ def main(stock1,stock2,stock3,stock4,stock5,stock6, timePeriod):
     ws._image = image
     symbols = [stock1,stock2,stock3,stock4,stock5,stock6]
     symbolsUsed = ['','','','','',''] 
+
     # Ignore blank stock textboxes
     index = 0
     for s in range(6):
@@ -41,22 +40,16 @@ def main(stock1,stock2,stock3,stock4,stock5,stock6, timePeriod):
     ws.row_dimensions[13].height = 30
     ws.row_dimensions[19].height = 30
 
-
-
     # Set column widths
     ws.column_dimensions['A'].width = 20
     ws.column_dimensions['B'].width = 20
-    #ws['B2'].alignment = Alignment(wrap_text=True)
     ws.column_dimensions['C'].width = 20
     ws.column_dimensions['D'].width = 20
     ws.column_dimensions['E'].width = 20
     ws.column_dimensions['F'].width = 20
     ws.column_dimensions['G'].width = 20
 
-
-
     # Loop thru Symbols
-
     validCode = [True, True, True, True, True, True]
     for c in range(index): #used to be 6
         print("c=" + str(c))
@@ -162,35 +155,22 @@ def main(stock1,stock2,stock3,stock4,stock5,stock6, timePeriod):
         # Find maxrows
         maxRows = loaded[2]
 
-        # Call chart maker
-        #createChart(symbols[c],wb,timestamps,values)
-
         # Headers
         new_sheet.cell(1,1,timeSpan)
         new_sheet.cell(1,2,"")
 
-        # Establish References
-        # data_reference = Reference(new_sheet, min_col=2, min_row=1, max_col=2,max_row=maxRows)
-        # x_values = Reference(new_sheet, min_col=1, min_row=1, max_col=1,max_row=maxRows)
-
-        # Create line chart
+        # Create area chart
         chart = AreaChart()
-        #data_reference = Reference(new_sheet, min_col=2, min_row=1, max_col=2,max_row=195)
-        #x_values = Reference(new_sheet, range_string=symbols[c] +"!a2:a150")
 
         # Cosmetic
         chart.title = symbols[c]
         chart.x_axis.title = timeSpan
         chart.y_axis.title = ""
         chart.x_axis.majorTickMark = "out"  # Display tick marks on x-axis
-        #chart.x_axis.title_format = Font(color = "FFFFFF") #= Font(color="FFFFFF")
-        #chart.x_axis.title.format = Font()
-        #chart.x_axis.majorGridlines = None  # Optional: Remove gridlines if you prefer a cleaner chart
         chart.legend = None
         chart.y_axis.majorGridlines = None
         chart.width = 3.5
         chart.height = 3.5
-
 
         # References
         values = Reference(new_sheet, min_col=2, min_row=2, max_row=maxRows)
@@ -199,16 +179,7 @@ def main(stock1,stock2,stock3,stock4,stock5,stock6, timePeriod):
         #time_reference = Reference(new_sheet, min_col=1,min_row=2,max_row=196)
         chart.add_data(values, titles_from_data = False)
         chart.set_categories(x_values)
-        
-   
-
-        #chart.y_axis.scaling.min = 100
-        #chart.y_axis.scaling.max = 130
-        #new_sheet.add_chart(chart, "d2")
         ws.add_chart(chart,stockDestination[c])
-
-    # Save
-    # Originally it was this: wb.save('output_with_imageB.xlsx')
 
     symbolString = ''
     for symbol in symbols:
@@ -238,12 +209,7 @@ def main(stock1,stock2,stock3,stock4,stock5,stock6, timePeriod):
         ws.cell(38,1).value = "payoutRatio"
 
     # Make last cosmetic changes
-
-
-
-
     for i in range(c+2):
-
         if i % 2 == 0:
             columnColor = "FFFFFF"
         else:
@@ -257,18 +223,10 @@ def main(stock1,stock2,stock3,stock4,stock5,stock6, timePeriod):
                 ws.cell(row = 19, column = i+1).hyperlink = tempLink
                 ws.cell(row = 19, column = i+1).style = "Hyperlink"
                 ws.cell(row = 19, column = i+1).fill = PatternFill(start_color = columnColor, end_color = columnColor, fill_type = "solid")
-
-
-
-
     for cell in ws[2]:
         cell.alignment = Alignment(wrap_text=True, horizontal = 'center', vertical = 'top')
-
     for cell in ws[13]:
         cell.alignment = Alignment(wrap_text=True, horizontal = 'center', vertical = 'top')
-
-    
-    
 
     # Now try this to let user download:
     output = BytesIO()

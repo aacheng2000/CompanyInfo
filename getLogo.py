@@ -32,20 +32,6 @@ def insert_image_to_excel(image_file, excel_file, sheet_name='Sheet1'):
     # Save the Excel workbook
     workbook.save(excel_file)
 
-#def test(imageUrl, ))
 # URL of the image you want to insert
 image_url = 'https://example.com/image.jpg'
-
 image_url = 'https://logo.clearbit.com/marcusmillichap.com'
-
-# Download and save the image
-#image = download_image(image_url)
-#if image:
-#    image_file_name = 'downloaded_image.png'  # Save as PNG or JPG
-#    save_image_to_file(image, image_file_name)
-
-    # Insert the image into Excel
-#    excel_file_name = 'output.xlsx'
-#    insert_image_to_excel(image_file_name, excel_file_name)
-
-#    print(f"Image has been inserted into {excel_file_name} successfully.")
