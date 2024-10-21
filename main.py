@@ -1,11 +1,12 @@
 # Main script
 
-def main(stock1,stock2,stock3,stock4,stock5,stock6):
+def main(stock1,stock2,stock3,stock4,stock5,stock6, timePeriod):
     #import requests
     import json
     import openpyxl
     from openpyxl import Workbook
-    from openpyxl.drawing.image import Image 
+    from openpyxl.drawing.image import Image
+    from openpyxl.styles import Alignment, PatternFill
     from getJSON import getJSON as g
     #from PIL import Image as PILImage
     from io import BytesIO
@@ -37,18 +38,26 @@ def main(stock1,stock2,stock3,stock4,stock5,stock6):
     logoDestination = ['B1','C1','D1','E1','F1','G1']
     stockDestination =  ['B25','C25','D25','E25','F25','G25']
     ws.row_dimensions[1].height = 100
+    ws.row_dimensions[13].height = 30
+    ws.row_dimensions[19].height = 30
+
+
 
     # Set column widths
     ws.column_dimensions['A'].width = 20
     ws.column_dimensions['B'].width = 20
+    #ws['B2'].alignment = Alignment(wrap_text=True)
     ws.column_dimensions['C'].width = 20
     ws.column_dimensions['D'].width = 20
     ws.column_dimensions['E'].width = 20
     ws.column_dimensions['F'].width = 20
     ws.column_dimensions['G'].width = 20
 
+
+
     # Loop thru Symbols
 
+    validCode = [True, True, True, True, True, True]
     for c in range(index): #used to be 6
         print("c=" + str(c))
         # Get company info from 'symbol-profile' path of Yahoo Finance API
@@ -57,6 +66,13 @@ def main(stock1,stock2,stock3,stock4,stock5,stock6):
         companyAttributes = ['address1','city','state','zip','country','phone','website','industry','sector','fullTimeEmployees']
         companyAttributeValues = ['address1','city','state','zip','country','phone','website','industry','sector','fullTimeEmployees']
         counter = 12
+        #print("c=" + str(c) + " and response = " + str(response['success']))
+        if response['success'] == False:
+            validCode[c] = False
+            ws.cell(3,c+2,symbols[c])
+            ws.cell(2,c+2,'Symbol not found' )
+
+            continue
         for element in companyAttributes:
             counter+=1
             if element in response['data']:
@@ -124,8 +140,10 @@ def main(stock1,stock2,stock3,stock4,stock5,stock6):
 
         # Create a new sheet for each symbol
         new_sheet = wb.create_sheet(title=symbols[c])
-        timeSpan = '1mo'
-        loaded = getArray(symbols[c],'1mo')     # 1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max
+        timeSpan = timePeriod
+        loaded = getArray(symbols[c],timePeriod)     # 1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max
+        if loaded[2] == 0:
+            continue
 
         # Paste time stamps  
         timestamps = loaded[0]
@@ -198,9 +216,11 @@ def main(stock1,stock2,stock3,stock4,stock5,stock6):
     symbolString = symbolString[:-3]
     url = "https://yahoo-finance-api-data.p.rapidapi.com/symbol/composite?symbol=" + symbolString
     response = g(url,apiHost)
-    print('last call = ' + response['data'][0]['shortName'])
+    #print('last call = ' + response['data'][0]['shortName'])
     for j in range(numNonBlank):
-        print('j=' + str(j))
+        if validCode[j] == False:
+            continue
+        #print('j=' + str(j) + str(response['data']))
         ws.cell(2,j+2).value = response['data'][j]['shortName']
         ws.cell(33,j+2).value = response['data'][j]['currency']
         ws.cell(34,j+2).value = response['data'][j]['pegRatio']
@@ -216,6 +236,39 @@ def main(stock1,stock2,stock3,stock4,stock5,stock6):
         ws.cell(36,1).value = "epsCurrentYear"
         ws.cell(37,1).value = "regularMarketPreviousClose"
         ws.cell(38,1).value = "payoutRatio"
+
+    # Make last cosmetic changes
+
+
+
+
+    for i in range(c+2):
+
+        if i % 2 == 0:
+            columnColor = "FFFFFF"
+        else:
+            columnColor = "F2F2F2"
+        for j in range(50):
+            ws.cell(j+1,i+1).alignment = Alignment(horizontal='center', vertical='center')
+            ws.cell(j+1,i+1).fill = PatternFill(start_color = columnColor, end_color = columnColor, fill_type = "solid")
+        for cell in ws[19]:
+            if ws.cell(row=19,column = i+1).value != None and i > 0:
+                tempLink = ws.cell(row = 19, column = i+1).value
+                ws.cell(row = 19, column = i+1).hyperlink = tempLink
+                ws.cell(row = 19, column = i+1).style = "Hyperlink"
+                ws.cell(row = 19, column = i+1).fill = PatternFill(start_color = columnColor, end_color = columnColor, fill_type = "solid")
+
+
+
+
+    for cell in ws[2]:
+        cell.alignment = Alignment(wrap_text=True, horizontal = 'center', vertical = 'top')
+
+    for cell in ws[13]:
+        cell.alignment = Alignment(wrap_text=True, horizontal = 'center', vertical = 'top')
+
+    
+    
 
     # Now try this to let user download:
     output = BytesIO()

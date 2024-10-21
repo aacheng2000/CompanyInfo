@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, send_file
 from main import main
+from htmlTemplate import inputVariables
 import time
 
 app = Flask(__name__)
@@ -7,7 +8,14 @@ app = Flask(__name__)
 @app.route('/')
 def hello_world():
     print('Creating Report...')
-    return '<form action="/execute" method="POST"><input type="text" id="stock1" name="stock1"><br><br><input type="text" id="stock2" name="stock2"><br><br><input type="text" id="stock3" name="stock3"><br><br><input type="text" id="stock4" name="stock4"><br><br><input type="text" id="stock5" name="stock5"><br><br><input type="text" id="stock6" name="stock6"><br><br><button type="submit">Run Python Function</button></form>'
+    return inputVariables
+
+
+
+
+
+
+'<form action="/execute" method="POST"><input type="text" id="stock1" name="stock1"><br><br><input type="text" id="stock2" name="stock2"><br><br><input type="text" id="stock3" name="stock3"><br><br><input type="text" id="stock4" name="stock4"><br><br><input type="text" id="stock5" name="stock5"><br><br><input type="text" id="stock6" name="stock6"><br><br><button type="submit">Run Python Function</button></form>'
   #  return '<form action="/execute" method="POST"><button type="submit">Run Python Function</button></form>'
     
 ## 1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max
@@ -23,7 +31,8 @@ def execute():
     stock4 = request.form.get('stock4')
     stock5 = request.form.get('stock5')
     stock6 = request.form.get('stock6')
-    excel_file = main(stock1,stock2,stock3,stock4,stock5,stock6)
+    timePeriod = request.form.get('timePeriod')
+    excel_file = main(stock1,stock2,stock3,stock4,stock5,stock6, timePeriod)
     endTime = time.time()
     params = request.args.to_dict()
     print(request.form.get('stock1'))
