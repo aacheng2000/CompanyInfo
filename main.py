@@ -96,6 +96,9 @@ def main(stock1,stock2,stock3,stock4,stock5,stock6, timePeriod):
         quarterlyEarnings = [1,2,3,4,5]
 
         # go thru 4 quarters
+        if response['success'] == False:
+            continue
+        
         numKeys = len(response['data']['financialsChart']['quarterly'])
         for i in range(numKeys):
             if response['success'] == True:
