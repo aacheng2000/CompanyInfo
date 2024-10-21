@@ -36,7 +36,7 @@ inputVariables = '''<form action="/execute" method="POST">
 
 Time Period
 <br><br>
-    <label for="timePeriod">Choose a time period:</label>
+    <label for="timePeriod">Choose a time period below. Note: it may take 15 seconds for report to complete.</label>
     <select id="timePeriod" name="timePeriod" value = "5d">
         <option value="1d">1 day</option>
         <option value="5d">5 days</option>
